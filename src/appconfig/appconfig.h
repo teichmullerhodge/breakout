@@ -1,0 +1,11 @@
+#ifndef APPCONFIG_H
+#define APPCONFIG_H 
+
+#define APPCONFIG_TITLE "Breakout"
+#define APPCONFIG_WINDOW_WIDTH 800
+#define APPCONFIG_WINDOW_HEIGHT 600 
+
+
+
+
+#endif 
