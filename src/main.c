@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
 
 
   SDL_Window * win = SDL_CreateWindow("Breakout", 100, 100, APPCONFIG_WINDOW_WIDTH, APPCONFIG_WINDOW_HEIGHT, 0);
-  SDL_Renderer *renderer = SDL_CreateRenderer(win, -1, 0);
+  SDL_Renderer *renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
   Pad pad = create_pad();
   Ball ball = create_ball();
