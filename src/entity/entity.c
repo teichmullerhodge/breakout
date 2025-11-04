@@ -100,28 +100,27 @@ void construct_brick_levels(Brick *bricks_buffer, size_t bricks_buffer_size, Lev
     Entity entity = {rect.x, rect.y, 0.0f, 0.0f, lines_colors[color_index], bricks_rectangles[k], true};
    
     i32 power_possibility = rand() % 100;
-    printf("Power possibility: %d\n", power_possibility);
     bricks_buffer[k].power = POWER_NONE;
     bool power_set = false;
 
-    if(power_possibility >= 0 && power_possibility <= INCREASE_PAD_SIZE_POSSIBILITY){
-      bricks_buffer[k].power = INCREASE_PAD_SIZE;
+    if(power_possibility >= 0 && power_possibility <= PROBABILITY_GROW_PAD){
+      bricks_buffer[k].power = POWER_GROW_PAD;
       power_set = true;
     }
-    if(power_possibility >= 0 && power_possibility <= DOUBLE_BALLS_POSSIBILITY && !power_set){
-      bricks_buffer[k].power = DOUBLE_BALLS;
+    if(power_possibility >= 0 && power_possibility <= PROBABILITY_DOUBLE_BALLS && !power_set){
+      bricks_buffer[k].power = POWER_DOUBLE_BALLS;
       power_set = true;
     }
-    if(power_possibility >= 0 && power_possibility <= INCREASE_BALLS_SIZE_POSSIBILITY && !power_set){
-      bricks_buffer[k].power = INCREASE_BALLS_SIZE;
+    if(power_possibility >= 0 && power_possibility <= PROBABILITY_BALLS_SIZE && !power_set){
+      bricks_buffer[k].power = POWER_GROW_BALLS_SIZE;
       power_set = true;
     }
-    if(power_possibility >= 0 && power_possibility <= INCREASE_BALL_VELOCITY_POSSIBILITY && !power_set){
-      bricks_buffer[k].power = INCREASE_BALL_VELOCITY;
+    if(power_possibility >= 0 && power_possibility <= PROBABILITY_INCREASE_BALL_VELOCITY && !power_set){
+      bricks_buffer[k].power = POWER_INCREASE_BALL_VELOCITY;
       power_set = true;
     }
-    if(power_possibility >= 0 && power_possibility <= INCREASE_PAD_VELOCITY_POSSIBILITY && !power_set){
-      bricks_buffer[k].power = INCREASE_PAD_VELOCITY;
+    if(power_possibility >= 0 && power_possibility <= PROBABILITY_INCREASE_PAD_VELOCITY && !power_set){
+      bricks_buffer[k].power = POWER_INCREASE_PAD_VELOCITY;
       power_set = true;
     }
 

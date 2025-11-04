@@ -3,7 +3,7 @@ set -e
 
 COMPILER=gcc
 CXXFLAGS="-Wall -Wextra -Werror -O0 -g"
-LDFLAGS="-lSDL2"
+LDFLAGS="-lSDL2 -lSDL2_ttf"
 
 SRC_DIR=src
 BUILD_DIR=build
