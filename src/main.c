@@ -10,7 +10,7 @@
 #include "scene/scene.h"
 #include "entity/entity.h"
 #include <time.h>
-A #include<SDL2 / SDL_ttf.h>
+#include<SDL2/SDL_ttf.h>
 #include "logger/logger.h"
 #include "context/gamecontext.h"
 #include <locale.h>
