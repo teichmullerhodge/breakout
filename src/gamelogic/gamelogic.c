@@ -3,18 +3,21 @@
 #include "../levels/levels.h"
 #include "../logger/logger.h"
 
-void check_pressed_flags(SDL_Event e, bool* left, bool *right, bool *esc) {
+void check_pressed_flags(SDL_Event e, bool* left, bool *right, bool *esc, bool *p, bool *r) {
     if (e.type == SDL_KEYDOWN){ 
         switch (e.key.keysym.sym){
           case SDLK_ESCAPE: *esc = true; break; 
           case SDLK_LEFT: *left = true; break;
           case SDLK_RIGHT: *right = true; break;
+          case SDLK_p: *p = !*p; break;
+          case SDLK_r: *r = true; break;
         }
       }
       if (e.type == SDL_KEYUP){
         switch (e.key.keysym.sym){
           case SDLK_LEFT: *left = false; break;
           case SDLK_RIGHT: *right = false; break;
+          case SDLK_r: *r = false; break; 
         }
       }
 }
@@ -47,23 +50,29 @@ void handle_power_up(PowerUps power, Ball *ball, Pad *pad){
 
 
 
-void handle_ball_window_colissions(Ball *ball) {
+void handle_ball_window_colissions(GameContext *context) {
 
-    if (ball->base.y <= 0) {
-      ball->base.y = 0;
-      ball->base.velocityY *= -1;
+    if (context->ball->base.y <= 0) {
+
+      context->ball->base.y = 0;
+      context->ball->base.velocityY *= -1;
     }
-    if (ball->base.y + ball->base.rect.h >= APPCONFIG_WINDOW_HEIGHT) {
-      ball->base.y = APPCONFIG_WINDOW_HEIGHT - ball->base.rect.h;
-      ball->base.velocityY *= -1;
+    if (context->ball->base.y + context->ball->base.rect.h >= APPCONFIG_WINDOW_HEIGHT) {
+        context->ball->base.y = APPCONFIG_WINDOW_HEIGHT - context->ball->base.rect.h;
+        context->ball->base.velocityY *= -1;
+        if(context->player->lives == 0){
+        // game over 
+        return;
+        }
+        context->player->lives--;
     }
-    if (ball->base.x <= 0) {
-      ball->base.x = 0;
-      ball->base.velocityX *= -1;
+    if (context->ball->base.x <= 0) {
+      context->ball->base.x = 0;
+      context->ball->base.velocityX *= -1;
     }
-    if (ball->base.x + ball->base.rect.w >= APPCONFIG_WINDOW_WIDTH) {
-      ball->base.x = APPCONFIG_WINDOW_WIDTH - ball->base.rect.w;
-      ball->base.velocityX *= -1;
+    if (context->ball->base.x + context->ball->base.rect.w >= APPCONFIG_WINDOW_WIDTH) {
+      context->ball->base.x = APPCONFIG_WINDOW_WIDTH - context->ball->base.rect.w;
+      context->ball->base.velocityX *= -1;
     }
 
 }
@@ -103,26 +112,27 @@ void should_reset_bricks(Brick *bricks, size_t bricks_size){
   }
 }
 
-void handle_bricks_draw_and_colission(Scene *scene, Ball *ball, Pad *pad, Brick *bricks, size_t bricks_size){
+void handle_bricks_draw_and_colission(Scene *scene, GameContext *context, size_t bricks_size){
 
     for(size_t k = 0; k < bricks_size; k++) {
       
-      if(bricks[k].destroyed) continue;
-      SDL_RenderDrawRect(scene->render, &bricks[k].base.rect);
-      color_entity(&bricks[k].base, scene, &bricks[k].base.color);
+      if(context->bricks[k].destroyed) continue;
+      SDL_RenderDrawRect(scene->render, &context->bricks[k].base.rect);
+      color_entity(&context->bricks[k].base, scene, &context->bricks[k].base.color);
       SDL_Rect collision_rect;
 
-      if(SDL_IntersectRect(&bricks[k].base.rect, &ball->base.rect, &collision_rect)){
-         
-          bricks[k].destroyed = true;
+      if(SDL_IntersectRect(&context->bricks[k].base.rect, &context->ball->base.rect, &collision_rect)){
+        
+          context->player->current_score += 100;
+          context->bricks[k].destroyed = true;
           if(collision_rect.w < collision_rect.h) {
-            ball->base.velocityX *= -1;
+            context->ball->base.velocityX *= -1;
             continue;
           }
           
-          ball->base.velocityY *= -1;
-          if(bricks[k].power != POWER_NONE) {
-            handle_power_up(bricks[k].power, ball, pad);     
+          context->ball->base.velocityY *= -1;
+          if(context->bricks[k].power != POWER_NONE) {
+            handle_power_up(context->bricks[k].power, context->ball, context->pad);     
           } 
       }
     }
@@ -156,6 +166,29 @@ void update_pad_position(SDL_Window *win, Pad *pad, bool left_pressed, bool righ
 
 }
 
+void display_centralized_message(Scene *scene, GameContext *context, const char *message) {
+    char message_buff[512];
+    snprintf(message_buff, sizeof(message_buff), "%s", message);
+    context->player_menu = render_text(scene, 
+                                       context->font, 
+                                       message_buff, 
+                                       (Color){255, 255, 255, 255}, 
+                                       context->player_menu);
+
+    if (context->player_menu && context->player_menu->texture) {
+      SDL_Rect dest;
+      dest.w = context->player_menu->width;
+      dest.h = context->player_menu->height;
+      dest.x = (APPCONFIG_WINDOW_WIDTH  - dest.w) / 2;
+      dest.y = (APPCONFIG_WINDOW_HEIGHT - dest.h) / 2;
+
+      SDL_RenderCopy(scene->render, context->player_menu->texture, NULL, &dest);
+    }
+
+
+    SDL_SetRenderDrawColor(scene->render, 13, 25, 32, 255);
+    SDL_RenderPresent(scene->render);
+ }
 
 
 void run_game(SDL_Window *win, Scene* scene, GameContext *context){
@@ -164,28 +197,41 @@ void run_game(SDL_Window *win, Scene* scene, GameContext *context){
   u64 last = 0;
   f64 delta_time = 0;
   bool running = true;
-  bool left_pressed = false, right_pressed = false, esc_pressed = false;
+  bool left_pressed = false, right_pressed = false, esc_pressed = false, p_pressed = false, r_pressed;
+  
   SDL_Event e;
 
   size_t number_bricks = get_levels_bricks_quantity(LEVEL_ONE);
 
-  u64 score = 0;
-
+  bool game_over = false;
   while(running) {
- 
+    
     last = now;
     now = SDL_GetPerformanceCounter();
     delta_time = (f64)(now - last) / SDL_GetPerformanceFrequency();
   
+    game_over = context->player->lives == 0;
+
     while (SDL_PollEvent(&e)){
       if(should_quit(e) || esc_pressed) running = false;
-      check_pressed_flags(e, &left_pressed, &right_pressed, &esc_pressed); 
+      check_pressed_flags(e, &left_pressed, &right_pressed, &esc_pressed, &p_pressed, &r_pressed); 
+    }
+    if(p_pressed && !game_over){
+      display_centralized_message(scene, context, "Paused");
+      continue;
+    }
+
+    if(game_over){
+
+      if(r_pressed) context->player->lives = 3;
+      display_centralized_message(scene, context, "Game Over");
+      continue;
     }
 
     update_pad_position(win, context->pad, left_pressed, right_pressed, delta_time);
-    handle_ball_window_colissions(context->ball);
+    handle_ball_window_colissions(context);
     handle_ball_pad_colission(context->ball, context->pad);
-    handle_bricks_draw_and_colission(scene, context->ball, context->pad, context->bricks, number_bricks); 
+    handle_bricks_draw_and_colission(scene, context, number_bricks); 
     update_ball_position(context->ball, delta_time);
     should_reset_bricks(context->bricks, number_bricks);
 
@@ -197,17 +243,15 @@ void run_game(SDL_Window *win, Scene* scene, GameContext *context){
     color_entity(&context->ball->base, scene, &context->ball->base.color);
 
 
-    char score_message[256];
-    (void)score_message;
-    score++;
-//    snprintf(score_message, sizeof(score_message), "Score: %ld", score);
-//    context->player_menu = render_text(scene, context->font, score_message, (Color){100, 100, 100, 255}, context->player_menu);
+    char menu_message[256];
+    snprintf(menu_message, sizeof(menu_message), "S: %ld L: %d", context->player->current_score, context->player->lives);
+    context->player_menu = render_text(scene, context->font, menu_message, (Color){255, 255, 255, 255}, context->player_menu);
 
 
- //   if(context->player_menu && context->player_menu->texture) {
-  //     SDL_Rect dest = {20, 20, context->player_menu->width, context->player_menu->height};
-   //    SDL_RenderCopy(scene->render, context->player_menu->texture, NULL, &dest);
-  //  }
+    if(context->player_menu && context->player_menu->texture) {
+       SDL_Rect dest = {20, 20, context->player_menu->width, context->player_menu->height};
+       SDL_RenderCopy(scene->render, context->player_menu->texture, NULL, &dest);
+    }
 
     SDL_SetRenderDrawColor(scene->render, 13, 25, 32, 255);
     SDL_RenderPresent(scene->render);

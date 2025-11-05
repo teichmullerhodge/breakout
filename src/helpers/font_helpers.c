@@ -19,7 +19,7 @@ TextLabel * render_text(Scene* scene, TTF_Font *font, const char *message, Color
     SDL_Color c = {color.r, color.g, color.b, color.a };
 
 
-    SDL_Surface* surface = TTF_RenderText_Solid(font, message, c);
+    SDL_Surface* surface = TTF_RenderUTF8_Solid(font, message, c);
     if (surface == NULL) {
         char err[256];
         snprintf(err, sizeof(err), "Error creating surface: %s\n", TTF_GetError());

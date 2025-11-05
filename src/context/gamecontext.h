@@ -5,13 +5,12 @@
 #include <SDL2/SDL_ttf.h>
 #include "../entity/entity.h"
 #include "../helpers/font_helpers.h"
-
-typedef struct
-{
+typedef struct {
 
   TTF_Font *font;
   TextLabel *player_menu;
 
+  Player *player;
   Pad *pad;
   Ball *ball;
   Brick *bricks;
