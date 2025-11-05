@@ -197,7 +197,7 @@ void run_game(SDL_Window *win, Scene* scene, GameContext *context){
   u64 last = 0;
   f64 delta_time = 0;
   bool running = true;
-  bool left_pressed = false, right_pressed = false, esc_pressed = false, p_pressed = false, r_pressed;
+  bool left_pressed = false, right_pressed = false, esc_pressed = false, p_pressed = false, r_pressed = false;
   
   SDL_Event e;
 
@@ -211,6 +211,8 @@ void run_game(SDL_Window *win, Scene* scene, GameContext *context){
     delta_time = (f64)(now - last) / SDL_GetPerformanceFrequency();
   
     game_over = context->player->lives == 0;
+
+    printf("reset pressed: %d\n", r_pressed);
 
     while (SDL_PollEvent(&e)){
       if(should_quit(e) || esc_pressed) running = false;
