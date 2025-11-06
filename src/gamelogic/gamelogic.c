@@ -3,21 +3,21 @@
 #include "../levels/levels.h"
 #include "../logger/logger.h"
 
-void check_pressed_flags(SDL_Event e, bool* left, bool *right, bool *esc, bool *p, bool *r) {
+void check_pressed_flags(SDL_Event e, GameKeys* keys) {
     if (e.type == SDL_KEYDOWN){ 
         switch (e.key.keysym.sym){
-          case SDLK_ESCAPE: *esc = true; break; 
-          case SDLK_LEFT: *left = true; break;
-          case SDLK_RIGHT: *right = true; break;
-          case SDLK_p: *p = !*p; break;
-          case SDLK_r: *r = true; break;
+          case SDLK_ESCAPE: keys->esc_pressed = true; break; 
+          case SDLK_LEFT: keys->left_pressed = true; break;
+          case SDLK_RIGHT: keys->right_pressed = true; break;
+          case SDLK_p: keys->p_pressed = !keys->p_pressed; break;
+          case SDLK_r: keys->r_pressed = true; break;
         }
       }
       if (e.type == SDL_KEYUP){
         switch (e.key.keysym.sym){
-          case SDLK_LEFT: *left = false; break;
-          case SDLK_RIGHT: *right = false; break;
-          case SDLK_r: *r = false; break; 
+          case SDLK_LEFT: keys->left_pressed = false; break;
+          case SDLK_RIGHT: keys->right_pressed = false; break;
+          case SDLK_r: keys->r_pressed = false; break; 
         }
       }
 }
@@ -197,8 +197,9 @@ void run_game(SDL_Window *win, Scene* scene, GameContext *context){
   u64 last = 0;
   f64 delta_time = 0;
   bool running = true;
-  bool left_pressed = false, right_pressed = false, esc_pressed = false, p_pressed = false, r_pressed = false;
-  
+ 
+  GameKeys keys = { 0 };
+
   SDL_Event e;
 
   size_t number_bricks = get_levels_bricks_quantity(LEVEL_ONE);
@@ -212,25 +213,24 @@ void run_game(SDL_Window *win, Scene* scene, GameContext *context){
   
     game_over = context->player->lives == 0;
 
-    printf("reset pressed: %d\n", r_pressed);
 
     while (SDL_PollEvent(&e)){
-      if(should_quit(e) || esc_pressed) running = false;
-      check_pressed_flags(e, &left_pressed, &right_pressed, &esc_pressed, &p_pressed, &r_pressed); 
+      if(should_quit(e) || keys.esc_pressed) running = false;
+      check_pressed_flags(e, &keys); 
     }
-    if(p_pressed && !game_over){
+    if(keys.p_pressed && !game_over){
       display_centralized_message(scene, context, "Paused");
       continue;
     }
 
     if(game_over){
 
-      if(r_pressed) context->player->lives = 3;
+      if(keys.r_pressed) context->player->lives = 3;
       display_centralized_message(scene, context, "Game Over");
       continue;
     }
 
-    update_pad_position(win, context->pad, left_pressed, right_pressed, delta_time);
+    update_pad_position(win, context->pad, keys.left_pressed, keys.right_pressed, delta_time);
     handle_ball_window_colissions(context);
     handle_ball_pad_colission(context->ball, context->pad);
     handle_bricks_draw_and_colission(scene, context, number_bricks); 

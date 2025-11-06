@@ -1,6 +1,8 @@
 #ifndef POWER_H 
 #define POWER_H 
 
+#include "../models/models.h"
+
 typedef enum {
 
   POWER_NONE,
@@ -43,5 +45,19 @@ typedef enum {
   LIMIT_MAX_BALL_VELOCITY = 500
 
 } PowerUpLimits;
+
+
+typedef struct {
+
+  Asset *grow_pad;
+  Asset *grow_balls_size;
+  Asset *increase_pad_velocity; 
+  Asset *increase_ball_velocity;
+
+} PowerAssets;
+
+
+PowerAssets *load_power_assets();
+
 
 #endif 
