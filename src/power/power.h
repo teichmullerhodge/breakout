@@ -1,6 +1,7 @@
 #ifndef POWER_H 
 #define POWER_H 
 
+#include "../scene/scene.h"
 #include "../models/models.h"
 
 typedef enum {
@@ -57,7 +58,7 @@ typedef struct {
 } PowerAssets;
 
 
-PowerAssets *load_power_assets();
+PowerAssets *load_power_assets(Scene *scene);
 
 
 #endif 

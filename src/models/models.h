@@ -6,7 +6,7 @@
 
 typedef struct {
 
-  const char *path;
+  char *path;
   SDL_Rect *position;
   SDL_Texture *texture;
 

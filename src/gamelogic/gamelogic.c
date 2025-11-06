@@ -255,6 +255,8 @@ void run_game(SDL_Window *win, Scene* scene, GameContext *context){
        SDL_RenderCopy(scene->render, context->player_menu->texture, NULL, &dest);
     }
 
+//    SDL_RenderCopy(scene->render, context->power_assets->increase_pad_velocity->texture, NULL, context->power_assets->increase_pad_velocity->position);
+
     SDL_SetRenderDrawColor(scene->render, 13, 25, 32, 255);
     SDL_RenderPresent(scene->render);
     SDL_RenderClear(scene->render); 

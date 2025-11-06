@@ -9,7 +9,7 @@ typedef struct {
 
   TTF_Font *font;
   TextLabel *player_menu;
-
+  PowerAssets *power_assets;
   Player *player;
   Pad *pad;
   Ball *ball;
