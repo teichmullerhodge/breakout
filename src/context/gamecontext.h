@@ -5,8 +5,11 @@
 #include <SDL2/SDL_ttf.h>
 #include "../entity/entity.h"
 #include "../helpers/font_helpers.h"
+
+
 typedef struct {
 
+  // data 
   TTF_Font *font;
   TextLabel *player_menu;
   PowerAssets *power_assets;
@@ -14,6 +17,7 @@ typedef struct {
   Pad *pad;
   Ball *ball;
   Brick *bricks;
+
 
 } GameContext;
 

@@ -27,21 +27,23 @@ bool should_quit(SDL_Event e){
 }
 
 
-void handle_power_up(PowerUps power, Ball *ball, Pad *pad){
+void handle_power_up(Scene *scene, PowerUps power, GameContext *context){
   
  
-      if(power == POWER_GROW_PAD  && pad->base.rect.w <= LIMIT_PAD_WIDTH) pad->base.rect.w += VALUE_GROW_PAD;
+      if(power == POWER_GROW_PAD  && context->pad->base.rect.w <= LIMIT_PAD_WIDTH) context->pad->base.rect.w += VALUE_GROW_PAD;
       if(power == POWER_DOUBLE_BALLS) { 
           (void)power; // TODO
       }
-      if(power == POWER_GROW_BALLS_SIZE && ball->base.rect.w <= LIMIT_BALL_MAX_WIDTH && ball->base.rect.h <= LIMIT_BALL_MAX_HEIGHT){
-          ball->base.rect.w += VALUE_GROW_BALLS_SIZE;
-          ball->base.rect.h += VALUE_GROW_BALLS_SIZE;
+      if(power == POWER_GROW_BALLS_SIZE && context->ball->base.rect.w <= LIMIT_BALL_MAX_WIDTH && context->ball->base.rect.h <= LIMIT_BALL_MAX_HEIGHT){
+          context->ball->base.rect.w += VALUE_GROW_BALLS_SIZE;
+          context->ball->base.rect.h += VALUE_GROW_BALLS_SIZE;
+
+
       }
-      if(power == POWER_INCREASE_PAD_VELOCITY && pad->base.velocityX <= LIMIT_PAD_VELOCITY) {
+      if(power == POWER_INCREASE_PAD_VELOCITY && context->pad->base.velocityX <= LIMIT_PAD_VELOCITY) {
           (void)power; // TODO
       } 
-      if(power == POWER_INCREASE_BALL_VELOCITY && ball->base.velocityX <= LIMIT_MAX_BALL_VELOCITY) {
+      if(power == POWER_INCREASE_BALL_VELOCITY && context->ball->base.velocityX <= LIMIT_MAX_BALL_VELOCITY) {
           (void)power; // TODO
       } 
 
@@ -132,7 +134,7 @@ void handle_bricks_draw_and_colission(Scene *scene, GameContext *context, size_t
           
           context->ball->base.velocityY *= -1;
           if(context->bricks[k].power != POWER_NONE) {
-            handle_power_up(context->bricks[k].power, context->ball, context->pad);     
+            handle_power_up(scene, context->bricks[k].power, context);     
           } 
       }
     }
@@ -254,8 +256,6 @@ void run_game(SDL_Window *win, Scene* scene, GameContext *context){
        SDL_Rect dest = {20, 20, context->player_menu->width, context->player_menu->height};
        SDL_RenderCopy(scene->render, context->player_menu->texture, NULL, &dest);
     }
-
-//    SDL_RenderCopy(scene->render, context->power_assets->increase_pad_velocity->texture, NULL, context->power_assets->increase_pad_velocity->position);
 
     SDL_SetRenderDrawColor(scene->render, 13, 25, 32, 255);
     SDL_RenderPresent(scene->render);
