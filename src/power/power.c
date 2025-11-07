@@ -16,6 +16,7 @@ SDL_Surface *load_image(const char *path) {
 
 }
 
+// is this the best way to do this?
 PowerAssets* load_power_assets(Scene *scene){
 
   PowerAssets *assets = malloc(sizeof(PowerAssets));
@@ -125,10 +126,6 @@ PowerAssets* load_power_assets(Scene *scene){
   SDL_Rect *grow_balls_size_rect = malloc(sizeof(SDL_Rect));
   SDL_Rect *pad_velocity_rect = malloc(sizeof(SDL_Rect));
   SDL_Rect *ball_velocity_rect = malloc(sizeof(SDL_Rect));
-
-  pad_velocity_rect->w = 200;
-  pad_velocity_rect->h = 200;
-
   
   assets->grow_pad->path = NULL;
   assets->grow_pad->texture = grow_pad_texture;
