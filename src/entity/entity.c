@@ -86,6 +86,18 @@ void construct_brick_levels(Brick *bricks_buffer, size_t bricks_buffer_size, Lev
 
   printf("Size of contents: %s - %ld\n", file_contents, strlen(file_contents));
 
+  static Color lines_colors[] = {
+    {215, 67, 71, 255},
+    {194, 93, 47, 255},
+    {205, 162, 9, 255},
+    {83, 179, 85, 255},
+    {55, 61, 216, 255},
+    {113, 60, 205, 255},
+    {0, 198, 197, 255}
+  };
+
+  size_t lines_colors_size = sizeof(lines_colors) / sizeof(lines_colors[0]);
+
   for (size_t c = 0; c < strlen(file_contents); c++) {
         if (file_contents[c] == '\n') { 
             row++; 
@@ -96,7 +108,16 @@ void construct_brick_levels(Brick *bricks_buffer, size_t bricks_buffer_size, Lev
          SDL_Rect rect = { col * 67, column_spacing * row, 50, 30 };
          bricks_rectangles[index] = rect; 
          bool is_brick = file_contents[c] == '1';
-         Entity entity = {rect.x, rect.y, 0.0f, 0.0f, is_brick ? random_color() : APPCONFIG_BG_COLOR, bricks_rectangles[index], true};
+
+         size_t color_index = row < lines_colors_size ? row : lines_colors_size - 1;
+         Entity entity = {
+          rect.x, rect.y, 0.0f, 0.0f,
+          is_brick ? lines_colors[color_index] : APPCONFIG_BG_COLOR,
+          bricks_rectangles[index],
+          true
+        };
+
+
         
         i32 power_possibility = rand() % 100;
         bricks_buffer[index].power = POWER_NONE;
@@ -131,19 +152,6 @@ void construct_brick_levels(Brick *bricks_buffer, size_t bricks_buffer_size, Lev
 
   printf("Number of bricks: %ld\n", index);
 
-  /*
-  size_t color_index = 0;
-
-  static Color lines_colors[] = {
-    {215, 67, 71, 255},
-    {194, 93, 47, 255},
-    {205, 162, 9, 255},
-    {83, 179, 85, 255},
-    {55, 61, 216, 255},
-    {113, 60, 205, 255},
-    {0, 198, 197, 255}
-  };
-  */
 
 }
 

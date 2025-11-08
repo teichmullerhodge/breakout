@@ -21,7 +21,7 @@ The game will run the default levels in a loop.
 ## ✅ Done
 
 - Entity models
-- (Simple) colission functionality 
+- (Simple) collision functionality 
 - Power ups logic and main power ups (increase pad-size, velocity, etc)
 - Level editor built with GTK4 
 - Edit levels.lvl files to create new levels if you don't want the editor

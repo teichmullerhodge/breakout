@@ -1,5 +1,6 @@
 #include "gamelogic.h"
 #include "../appconfig/appconfig.h"
+#include "../appconfig/appconstants.h"
 #include "../levels/levels.h"
 #include "../logger/logger.h"
 
@@ -54,7 +55,7 @@ void handle_power_up(Scene *scene, PowerUps power, GameContext *context){
 
 
 
-void handle_ball_window_colissions(GameContext *context) {
+void handle_ball_window_collisions(GameContext *context) {
 
     if (context->ball->base.y <= 0) {
 
@@ -81,7 +82,7 @@ void handle_ball_window_colissions(GameContext *context) {
 
 }
 
-void handle_ball_pad_colission(Ball *ball, Pad* pad){
+void handle_ball_pad_collision(Ball *ball, Pad* pad){
 
    
     if (SDL_HasIntersection(&pad->base.rect, &ball->base.rect)) {
@@ -115,7 +116,6 @@ bool all_bricks_destroyed(Brick *bricks, size_t bricks_size) {
 }
 
 void should_advance_levels(GameContext *context){
-  printf("Bricks destroyed: %ld - Destructive bricks: %d\n", context->bricks_destroyed, context->level_info.destructiveBricks);
   if(context->bricks_destroyed == context->level_info.destructiveBricks){
 
     if(context->current_level == LEVEL_CUSTOM) {
@@ -136,7 +136,7 @@ void should_advance_levels(GameContext *context){
     
 }
 
-void handle_bricks_draw_and_colission(Scene *scene, GameContext *context){
+void handle_bricks_draw_and_collision(Scene *scene, GameContext *context){
 
     for(size_t k = 0; k < context->level_info.amountOfBricks; k++) {
       
@@ -248,16 +248,16 @@ void run_game(SDL_Window *win, Scene* scene, GameContext *context){
 
     if(game_over){
 
-      if(keys.r_pressed) context->player->lives = 3;
+      if(keys.r_pressed) context->player->lives = BREAKOUT_INITIAL_LIVES;
       display_centralized_message(scene, context, "Game Over");
       continue;
     }
 
     should_advance_levels(context);
     update_pad_position(win, context->pad, keys.left_pressed, keys.right_pressed, delta_time);
-    handle_ball_window_colissions(context);
-    handle_ball_pad_colission(context->ball, context->pad);
-    handle_bricks_draw_and_colission(scene, context); 
+    handle_ball_window_collisions(context);
+    handle_ball_pad_collision(context->ball, context->pad);
+    handle_bricks_draw_and_collision(scene, context); 
     update_ball_position(context->ball, delta_time);
 
 

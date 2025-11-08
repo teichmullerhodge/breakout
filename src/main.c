@@ -17,7 +17,7 @@
 #include "context/gamecontext.h"
 #include <locale.h>
 #include "levels/levels.h"
-
+#include "appconfig/appconstants.h"
 #define N_BRICKS 999
 
 int main(int argc, char **argv) {
@@ -58,7 +58,7 @@ int main(int argc, char **argv) {
 
   LevelMetadata level_info = is_custom_level ? get_custom_level_information(argv[1]) : get_level_information(LEVEL_HOLE_MIDDLE);
  
-  Player player = {"user", 255, 0, 0};
+  Player player = {"user", BREAKOUT_INITIAL_LIVES, 0, 0};
 
   SDL_Window *win = SDL_CreateWindow("Breakout", 100, 100, APPCONFIG_WINDOW_WIDTH, APPCONFIG_WINDOW_HEIGHT, 0);
   SDL_Renderer *renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
@@ -77,7 +77,6 @@ int main(int argc, char **argv) {
   }
   GameContext context = {game_font, player_menu, power_assets, &player, &pad, &ball, bricks, level_info, level_info.level, 0};
   run_game(win, scene, &context);
-  // level_editor_mode(win, scene, &context);
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(win);
   SDL_Quit();
