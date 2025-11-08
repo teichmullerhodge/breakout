@@ -15,7 +15,8 @@ typedef enum {
   LEVEL_GATE,
   LEVEL_MOLD_CENTER,
   LEVEL_PIRAMID,
-  LEVEL_THREE_BLOCKS
+  LEVEL_THREE_BLOCKS,
+  LEVEL_CUSTOM = 99
 
 
 } Level;
@@ -30,6 +31,7 @@ typedef struct {
 } LevelMetadata;
 
 LevelMetadata get_level_information(Level level);
+LevelMetadata get_custom_level_information(char *path);
 
 
 #endif

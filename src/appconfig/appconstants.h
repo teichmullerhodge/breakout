@@ -1,0 +1,10 @@
+#ifndef APPCONSTANTS_H
+#define APPCONSTANTS_H
+
+
+
+#define BREAKOUT_BALL_VELOCITY 400.0f 
+#define BREAKOUT_PAD_VELOCITY 350.0f 
+
+
+#endif 

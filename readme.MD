@@ -1,6 +1,14 @@
-# SBG2
+# Breakout 
 
-A simple Breakout game using **SDL2** in pure C.
+A Breakout game using **SDL2** in pure C.
+
+
+## 📌 Instructions 
+
+- To play a custom level just run ./<executable> [level-path] 
+The game will run the default levels in a loop. 
+
+
 
 ---
 
@@ -8,8 +16,6 @@ A simple Breakout game using **SDL2** in pure C.
 
 - Network support for multiple users
 - Render Power ups 
-- Display information about stage, score 
-- Create a level creator 
 ---
 
 ## ✅ Done
@@ -17,7 +23,9 @@ A simple Breakout game using **SDL2** in pure C.
 - Entity models
 - (Simple) colission functionality 
 - Power ups logic and main power ups (increase pad-size, velocity, etc)
-- Edit levels.lvl files to create new levels 
+- Level editor built with GTK4 
+- Edit levels.lvl files to create new levels if you don't want the editor
+- Display information about stage, score 
 ---
 
 ## 🛠️ Build Instructions

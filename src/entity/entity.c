@@ -1,5 +1,5 @@
 #include "entity.h"
-
+#include "../appconfig/appconstants.h"
 #include "../logger/logger.h"
 #include <stdio.h>
 #include "../helpers/file_helpers.h" 
@@ -46,7 +46,7 @@ void color_entity(Entity *entity, Scene *scene, Color *color) {
 Pad create_pad(){
   
   SDL_Rect pad_rect = {100, 100, 100, 10};
-  Pad pad = {350.0f, 575.0f, 350.0f, 350.0f, (Color){40,100,255,60}, pad_rect, true};
+  Pad pad = {350.0f, 575.0f, BREAKOUT_PAD_VELOCITY, BREAKOUT_PAD_VELOCITY, (Color){40,100,255,60}, pad_rect, true};
 
   return pad;
 
@@ -54,7 +54,7 @@ Pad create_pad(){
 Ball create_ball(){
 
   SDL_Rect ball_rect = {300, 300, 20, 20};
-  Ball ball = {100, 500, 1000.0f, 1000.0f, (Color){255,255,255,255}, ball_rect, true};
+  Ball ball = {100, 500, BREAKOUT_BALL_VELOCITY, BREAKOUT_BALL_VELOCITY, (Color){255,255,255,255}, ball_rect, true};
   return ball;
 
 }
@@ -62,7 +62,7 @@ Ball create_ball(){
 
 #define MAX_N_BRICKS 2048 
 
-void construct_brick_levels(Brick *bricks_buffer, size_t bricks_buffer_size, Level level){
+void construct_brick_levels(Brick *bricks_buffer, size_t bricks_buffer_size, Level level, char *custom_path){
 
 
   if(bricks_buffer_size >= MAX_N_BRICKS){
@@ -76,7 +76,7 @@ void construct_brick_levels(Brick *bricks_buffer, size_t bricks_buffer_size, Lev
   snprintf(level_path, sizeof(level_path), "../levels/level%d.lvl", level);
 
   printf("Level path: %s\n", level_path);
-  char *file_contents = read_file_contents(level_path);
+  char *file_contents = custom_path == NULL ? read_file_contents(level_path) : read_file_contents(custom_path);
 
 
   size_t index = 0;

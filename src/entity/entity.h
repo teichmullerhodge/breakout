@@ -79,7 +79,7 @@ void color_entity(Entity *entity, Scene *scene, Color *color);
 Pad create_pad();
 Ball create_ball();
 
-void construct_brick_levels(Brick *bricks_buffer, size_t bricks_buffer_size, Level level);
+void construct_brick_levels(Brick *bricks_buffer, size_t bricks_buffer_size, Level level, char *custom_path);
 
 
 Pixel *new_window_pixels(size_t width, size_t height);

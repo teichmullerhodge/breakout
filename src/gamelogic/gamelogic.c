@@ -115,7 +115,13 @@ bool all_bricks_destroyed(Brick *bricks, size_t bricks_size) {
 }
 
 void should_advance_levels(GameContext *context){
+  printf("Bricks destroyed: %ld - Destructive bricks: %d\n", context->bricks_destroyed, context->level_info.destructiveBricks);
   if(context->bricks_destroyed == context->level_info.destructiveBricks){
+
+    if(context->current_level == LEVEL_CUSTOM) {
+      LOGGER_SUCCESS("Finished a custom level!\n");
+      return;
+    }
 
     if(context->current_level == LEVEL_THREE_BLOCKS) context->current_level = LEVEL_RESET;
     context->current_level++;
@@ -123,7 +129,7 @@ void should_advance_levels(GameContext *context){
 
 
     
-    construct_brick_levels(context->bricks, context->level_info.amountOfBricks, context->current_level);
+    construct_brick_levels(context->bricks, context->level_info.amountOfBricks, context->current_level, NULL);
 
     context->bricks_destroyed = 0;
   }
@@ -263,7 +269,7 @@ void run_game(SDL_Window *win, Scene* scene, GameContext *context){
 
 
     char menu_message[256];
-    snprintf(menu_message, sizeof(menu_message), "S: %ld L: %d", context->player->current_score, context->player->lives);
+    snprintf(menu_message, sizeof(menu_message), "S: %ld L: %d P: %d", context->player->current_score, context->player->lives, context->current_level);
     context->player_menu = render_text(scene, context->font, menu_message, (Color){255, 255, 255, 255}, context->player_menu);
 
 

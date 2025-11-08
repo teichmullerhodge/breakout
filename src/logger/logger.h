@@ -37,7 +37,7 @@
   #define LOGGER_DEBUG(message) logger_debug(message)
   #define LOGGER_ERROR(message) logger_error(message)
   #define LOGGER_WARNING(message) logger_warning(message)
-  #define LOGGER_SUCCESS(message) logger_warning(message)
+  #define LOGGER_SUCCESS(message) logger_success(message)
   #define LOGGER_FATAL(message) logger_fatal(message)
   
 
