@@ -17,7 +17,7 @@ A simple Breakout game using **SDL2** in pure C.
 - Entity models
 - (Simple) colission functionality 
 - Power ups logic and main power ups (increase pad-size, velocity, etc)
-
+- Edit levels.lvl files to create new levels 
 ---
 
 ## 🛠️ Build Instructions

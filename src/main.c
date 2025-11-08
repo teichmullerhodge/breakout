@@ -7,7 +7,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "gamelogic/gamelogic.h"
-#include "level-editor/level_editor.h"
 #include "levels/levels.h"
 #include "power/power.h"
 #include "scene/scene.h"
@@ -70,7 +69,7 @@ printf("Level: %d, amountOfBlocks: %d, toBeDestroyed: %d\n", level_info.level, l
  
 
 
-  Player player = {"user", 255, 0, 0};
+  Player player = {"user", 3, 0, 0};
 
   SDL_Window *win = SDL_CreateWindow("Breakout", 100, 100, APPCONFIG_WINDOW_WIDTH, APPCONFIG_WINDOW_HEIGHT, 0);
   SDL_Renderer *renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);

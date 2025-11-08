@@ -115,13 +115,9 @@ bool all_bricks_destroyed(Brick *bricks, size_t bricks_size) {
 }
 
 void should_advance_levels(GameContext *context){
-
-  char message[256];
-  snprintf(message, sizeof(message), "Bricks size: %d - destroyed: %ld", context->level_info.destructiveBricks, context->bricks_destroyed);
-  LOGGER_DEBUG(message);
   if(context->bricks_destroyed == context->level_info.destructiveBricks){
 
-    LOGGER_SUCCESS("At all_bricks_destroyed!\n");
+    if(context->current_level == LEVEL_THREE_BLOCKS) context->current_level = LEVEL_RESET;
     context->current_level++;
     context->level_info = get_level_information(context->current_level);
 

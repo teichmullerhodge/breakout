@@ -6,6 +6,9 @@
 #include "../declarations/declarations.h"
 typedef enum {
 
+  LEVEL_RESET = -1,
+
+
   LEVEL_HOLE_MIDDLE,
   LEVEL_INVERTED_PIRAMID,
   LEVEL_CHESS,
