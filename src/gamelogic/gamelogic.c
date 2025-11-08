@@ -99,45 +99,65 @@ void handle_ball_pad_colission(Ball *ball, Pad* pad){
 
 bool all_bricks_destroyed(Brick *bricks, size_t bricks_size) {
 
+  char message[256];
+  size_t destroyed = 0;
   for(size_t k = 0; k < bricks_size; k++){
-    if(!bricks[k].destroyed) return false;
+    if(!bricks[k].destroyed) {
+      snprintf(message, sizeof(message), "Number of bricks: %ld - destroyed: %ld", bricks_size, destroyed);
+      LOGGER_DEBUG(message);
+      return false;
+    }
+    destroyed++;
   }
 
   return true;
 
 }
 
-void should_reset_bricks(Brick *bricks, size_t bricks_size){
+void should_advance_levels(GameContext *context){
 
-  if(all_bricks_destroyed(bricks, bricks_size)){
-   for(size_t k = 0; k < bricks_size; k++){
-    bricks[k].destroyed = false;
-    }  
+  char message[256];
+  snprintf(message, sizeof(message), "Bricks size: %d - destroyed: %ld", context->level_info.destructiveBricks, context->bricks_destroyed);
+  LOGGER_DEBUG(message);
+  if(context->bricks_destroyed == context->level_info.destructiveBricks){
+
+    LOGGER_SUCCESS("At all_bricks_destroyed!\n");
+    context->current_level++;
+    context->level_info = get_level_information(context->current_level);
+
+
+    
+    construct_brick_levels(context->bricks, context->level_info.amountOfBricks, context->current_level);
+
+    context->bricks_destroyed = 0;
   }
+    
 }
 
-void handle_bricks_draw_and_colission(Scene *scene, GameContext *context, size_t bricks_size){
+void handle_bricks_draw_and_colission(Scene *scene, GameContext *context){
 
-    for(size_t k = 0; k < bricks_size; k++) {
+    for(size_t k = 0; k < context->level_info.amountOfBricks; k++) {
       
       if(context->bricks[k].destroyed) continue;
       SDL_RenderDrawRect(scene->render, &context->bricks[k].base.rect);
       color_entity(&context->bricks[k].base, scene, &context->bricks[k].base.color);
       SDL_Rect collision_rect;
 
-      if(SDL_IntersectRect(&context->bricks[k].base.rect, &context->ball->base.rect, &collision_rect)){
+      if(!context->bricks[k].destroyed && SDL_IntersectRect(&context->bricks[k].base.rect, &context->ball->base.rect, &collision_rect)){
         
           context->player->current_score += 100;
           context->bricks[k].destroyed = true;
+          context->bricks_destroyed++;
+          if(context->bricks[k].power != POWER_NONE) {
+            handle_power_up(scene, context->bricks[k].power, context);     
+          } 
+
           if(collision_rect.w < collision_rect.h) {
             context->ball->base.velocityX *= -1;
             continue;
           }
           
           context->ball->base.velocityY *= -1;
-          if(context->bricks[k].power != POWER_NONE) {
-            handle_power_up(scene, context->bricks[k].power, context);     
-          } 
       }
     }
 }
@@ -203,10 +223,7 @@ void run_game(SDL_Window *win, Scene* scene, GameContext *context){
   bool running = true;
  
   GameKeys keys = { 0 };
-
   SDL_Event e;
-
-  size_t number_bricks = get_levels_bricks_quantity(LEVEL_ONE);
 
   bool game_over = false;
   while(running) {
@@ -234,12 +251,12 @@ void run_game(SDL_Window *win, Scene* scene, GameContext *context){
       continue;
     }
 
+    should_advance_levels(context);
     update_pad_position(win, context->pad, keys.left_pressed, keys.right_pressed, delta_time);
     handle_ball_window_colissions(context);
     handle_ball_pad_colission(context->ball, context->pad);
-    handle_bricks_draw_and_colission(scene, context, number_bricks); 
+    handle_bricks_draw_and_colission(scene, context); 
     update_ball_position(context->ball, delta_time);
-    should_reset_bricks(context->bricks, number_bricks);
 
 
     SDL_RenderDrawRect(scene->render, &context->pad->base.rect);
@@ -261,7 +278,7 @@ void run_game(SDL_Window *win, Scene* scene, GameContext *context){
 
     SDL_SetRenderDrawColor(scene->render, 13, 25, 32, 255);
     SDL_RenderPresent(scene->render);
-    SDL_RenderClear(scene->render); 
+    SDL_RenderClear(scene->render);
   }
 }
 

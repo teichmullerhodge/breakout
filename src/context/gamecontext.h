@@ -18,6 +18,11 @@ typedef struct {
   Ball *ball;
   Brick *bricks;
 
+  // state
+  LevelMetadata level_info;
+  Level current_level;
+  size_t bricks_destroyed;
+  
 
 } GameContext;
 

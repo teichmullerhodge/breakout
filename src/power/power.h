@@ -59,6 +59,7 @@ typedef struct {
 
 
 PowerAssets *load_power_assets(Scene *scene);
+void destroy_power_assets(PowerAssets *assets);
 
 
 #endif 

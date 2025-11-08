@@ -17,6 +17,19 @@ typedef struct {
 
 } Color;
 
+
+typedef struct {
+
+
+  Color color;
+  u32 x; 
+  u32 y;
+
+
+} Pixel;
+
+
+
 typedef struct {
 
 
@@ -66,6 +79,10 @@ void color_entity(Entity *entity, Scene *scene, Color *color);
 Pad create_pad();
 Ball create_ball();
 
-void construct_brick_levels(Brick *bricks_buffer, size_t bricks_buffer_size, Level level, size_t n_bricks);
+void construct_brick_levels(Brick *bricks_buffer, size_t bricks_buffer_size, Level level);
+
+
+Pixel *new_window_pixels(size_t width, size_t height);
+
 
 #endif 

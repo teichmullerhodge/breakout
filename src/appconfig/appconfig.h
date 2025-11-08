@@ -6,6 +6,8 @@
 #define APPCONFIG_WINDOW_HEIGHT 600 
 
 
+#define APPCONFIG_BG_COLOR (Color){13, 25, 32, 255}
+
 
 
 #endif 

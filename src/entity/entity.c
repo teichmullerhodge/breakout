@@ -1,7 +1,10 @@
 #include "entity.h"
 
 #include "../logger/logger.h"
-
+#include <stdio.h>
+#include "../helpers/file_helpers.h" 
+#include "../helpers/color_helpers.h"
+#include "../appconfig/appconfig.h"
 
 void color_entity(Entity *entity, Scene *scene, Color *color) {
 
@@ -51,19 +54,16 @@ Pad create_pad(){
 Ball create_ball(){
 
   SDL_Rect ball_rect = {300, 300, 20, 20};
-  Ball ball = {100, 500, 400.0f, 400.0f, (Color){255,255,255,255}, ball_rect, true};
+  Ball ball = {100, 500, 1000.0f, 1000.0f, (Color){255,255,255,255}, ball_rect, true};
   return ball;
 
 }
 
 
-#define MAX_N_BRICKS 255 
+#define MAX_N_BRICKS 2048 
 
-void construct_brick_levels(Brick *bricks_buffer, size_t bricks_buffer_size, Level level, size_t n_bricks){
+void construct_brick_levels(Brick *bricks_buffer, size_t bricks_buffer_size, Level level){
 
-  (void)level;
-
-  printf("Bricks buffer size: %lu.\n", bricks_buffer_size);
 
   if(bricks_buffer_size >= MAX_N_BRICKS){
     LOGGER_ERROR("The bricks buffer has a size greater than MAX_N_BRICKS");
@@ -71,7 +71,67 @@ void construct_brick_levels(Brick *bricks_buffer, size_t bricks_buffer_size, Lev
   }
 
   SDL_Rect bricks_rectangles[MAX_N_BRICKS];
-  size_t line = 100;
+
+  char level_path[128];
+  snprintf(level_path, sizeof(level_path), "../levels/level%d.lvl", level);
+
+  printf("Level path: %s\n", level_path);
+  char *file_contents = read_file_contents(level_path);
+
+
+  size_t index = 0;
+  size_t row = 0;
+  size_t col = 0;
+  const size_t column_spacing = 50;
+
+  printf("Size of contents: %s - %ld\n", file_contents, strlen(file_contents));
+
+  for (size_t c = 0; c < strlen(file_contents); c++) {
+        if (file_contents[c] == '\n') { 
+            row++; 
+            col = 0; 
+            continue;
+          };
+         col++;
+         SDL_Rect rect = { col * 67, column_spacing * row, 50, 30 };
+         bricks_rectangles[index] = rect; 
+         bool is_brick = file_contents[c] == '1';
+         Entity entity = {rect.x, rect.y, 0.0f, 0.0f, is_brick ? random_color() : APPCONFIG_BG_COLOR, bricks_rectangles[index], true};
+        
+        i32 power_possibility = rand() % 100;
+        bricks_buffer[index].power = POWER_NONE;
+        bool power_set = false;
+
+        if(power_possibility >= 0 && power_possibility <= PROBABILITY_GROW_PAD){
+          bricks_buffer[index].power = POWER_GROW_PAD;
+          power_set = true;
+        }
+        if(power_possibility >= 0 && power_possibility <= PROBABILITY_DOUBLE_BALLS && !power_set){
+          bricks_buffer[index].power = POWER_DOUBLE_BALLS;
+          power_set = true;
+        }
+        if(power_possibility >= 0 && power_possibility <= PROBABILITY_BALLS_SIZE && !power_set){
+          bricks_buffer[index].power = POWER_GROW_BALLS_SIZE;
+          power_set = true;
+        }
+        if(power_possibility >= 0 && power_possibility <= PROBABILITY_INCREASE_BALL_VELOCITY && !power_set){
+          bricks_buffer[index].power = POWER_INCREASE_BALL_VELOCITY;
+          power_set = true;
+        }
+        if(power_possibility >= 0 && power_possibility <= PROBABILITY_INCREASE_PAD_VELOCITY && !power_set){
+          bricks_buffer[index].power = POWER_INCREASE_PAD_VELOCITY;
+          power_set = true;
+        }
+
+        bricks_buffer[index].base = entity;
+        bricks_buffer[index].destroyed = !is_brick; // non bricks are 'destroyed'
+
+        index++;
+      }
+
+  printf("Number of bricks: %ld\n", index);
+
+  /*
   size_t color_index = 0;
 
   static Color lines_colors[] = {
@@ -83,56 +143,30 @@ void construct_brick_levels(Brick *bricks_buffer, size_t bricks_buffer_size, Lev
     {113, 60, 205, 255},
     {0, 198, 197, 255}
   };
-
-  for (size_t k = 0; k < n_bricks; k++) {
-    if (k % 10 == 0) { 
-      line += 30;
-      color_index++;
-    }
-    SDL_Rect rect = {
-        .x = 100 + (k % 10) * 60,
-        .y = line,
-        .w = 50,
-        .h = 20
-    };
-    bricks_rectangles[k] = rect;
-
-    Entity entity = {rect.x, rect.y, 0.0f, 0.0f, lines_colors[color_index], bricks_rectangles[k], true};
-   
-    i32 power_possibility = rand() % 100;
-    bricks_buffer[k].power = POWER_NONE;
-    bool power_set = false;
-
-    if(power_possibility >= 0 && power_possibility <= PROBABILITY_GROW_PAD){
-      bricks_buffer[k].power = POWER_GROW_PAD;
-      power_set = true;
-    }
-    if(power_possibility >= 0 && power_possibility <= PROBABILITY_DOUBLE_BALLS && !power_set){
-      bricks_buffer[k].power = POWER_DOUBLE_BALLS;
-      power_set = true;
-    }
-    if(power_possibility >= 0 && power_possibility <= PROBABILITY_BALLS_SIZE && !power_set){
-      bricks_buffer[k].power = POWER_GROW_BALLS_SIZE;
-      power_set = true;
-    }
-    if(power_possibility >= 0 && power_possibility <= PROBABILITY_INCREASE_BALL_VELOCITY && !power_set){
-      bricks_buffer[k].power = POWER_INCREASE_BALL_VELOCITY;
-      power_set = true;
-    }
-    if(power_possibility >= 0 && power_possibility <= PROBABILITY_INCREASE_PAD_VELOCITY && !power_set){
-      bricks_buffer[k].power = POWER_INCREASE_PAD_VELOCITY;
-      power_set = true;
-    }
-
-
-
-    bricks_buffer[k].base = entity;
-    bricks_buffer[k].destroyed = false;
-  }
-
-
-
-
+  */
 
 }
 
+Pixel *new_window_pixels(size_t width, size_t height){
+
+  size_t pixels_amount = width * height;
+  Pixel *pixels = malloc(sizeof(Pixel) * (pixels_amount));
+
+  if(pixels == NULL){
+    LOGGER_ERROR("Failed to initialize pixels at entity.");
+    return NULL;
+  }
+  size_t index = 0;
+  for(size_t row = 0; row < height; row++){
+    for(size_t col = 0; col < width; col++){
+      pixels[index].x = col;
+      pixels[index].y = row;
+      pixels[index].color = (Color){0,0,0,0};
+    }
+  }
+
+
+  return pixels;
+  
+
+}
