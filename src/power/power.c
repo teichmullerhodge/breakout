@@ -147,3 +147,43 @@ PowerAssets* load_power_assets(Scene *scene){
 
   return assets; 
 }
+
+
+void destroy_power_assets(PowerAssets *assets) {
+    if (assets == NULL) return;
+
+    if (assets->grow_pad) {
+        if (assets->grow_pad->texture)
+            SDL_DestroyTexture(assets->grow_pad->texture);
+        if (assets->grow_pad->position)
+            free(assets->grow_pad->position);
+        free(assets->grow_pad);
+    }
+
+    if (assets->grow_balls_size) {
+        if (assets->grow_balls_size->texture)
+            SDL_DestroyTexture(assets->grow_balls_size->texture);
+        if (assets->grow_balls_size->position)
+            free(assets->grow_balls_size->position);
+        free(assets->grow_balls_size);
+    }
+
+    if (assets->increase_pad_velocity) {
+        if (assets->increase_pad_velocity->texture)
+            SDL_DestroyTexture(assets->increase_pad_velocity->texture);
+        if (assets->increase_pad_velocity->position)
+            free(assets->increase_pad_velocity->position);
+        free(assets->increase_pad_velocity);
+    }
+
+    if (assets->increase_ball_velocity) {
+        if (assets->increase_ball_velocity->texture)
+            SDL_DestroyTexture(assets->increase_ball_velocity->texture);
+        if (assets->increase_ball_velocity->position)
+            free(assets->increase_ball_velocity->position);
+        free(assets->increase_ball_velocity);
+    }
+
+    free(assets);
+}
+
