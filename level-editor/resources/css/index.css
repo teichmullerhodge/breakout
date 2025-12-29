@@ -1,0 +1,21 @@
+headerbar {
+  
+  background: none;
+  border: none;
+
+}
+
+window {
+  
+  border-radius: 10px;
+}
+
+
+.brick-active {
+
+  background-color: #32a852;
+  background-image: none;
+
+}
+
+

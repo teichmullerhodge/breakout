@@ -27,6 +27,30 @@ bool should_quit(SDL_Event e){
   return e.type == SDL_QUIT;
 }
 
+void display_centralized_message(Scene *scene, GameContext *context, const char *message) {
+    char message_buff[512];
+    snprintf(message_buff, sizeof(message_buff), "%s", message);
+    context->player_menu = render_text(scene, 
+                                       context->font, 
+                                       message_buff, 
+                                       (Color){255, 255, 255, 255}, 
+                                       context->player_menu);
+
+    if (context->player_menu && context->player_menu->texture) {
+      SDL_Rect dest;
+      dest.w = context->player_menu->width;
+      dest.h = context->player_menu->height;
+      dest.x = (APPCONFIG_WINDOW_WIDTH  - dest.w) / 2;
+      dest.y = (APPCONFIG_WINDOW_HEIGHT - dest.h) / 2;
+
+      SDL_RenderCopy(scene->render, context->player_menu->texture, NULL, &dest);
+    }
+
+
+    SDL_SetRenderDrawColor(scene->render, 13, 25, 32, 255);
+    SDL_RenderPresent(scene->render);
+ }
+
 
 void handle_power_up(Scene *scene, PowerUps power, GameContext *context){
   
@@ -115,11 +139,10 @@ bool all_bricks_destroyed(Brick *bricks, size_t bricks_size) {
 
 }
 
-void should_advance_levels(GameContext *context){
+void should_advance_levels(Scene *scene, GameContext *context){
   if(context->bricks_destroyed == context->level_info.destructiveBricks){
 
     if(context->current_level == LEVEL_CUSTOM) {
-      LOGGER_SUCCESS("Finished a custom level!\n");
       return;
     }
 
@@ -192,29 +215,7 @@ void update_pad_position(SDL_Window *win, Pad *pad, bool left_pressed, bool righ
 
 }
 
-void display_centralized_message(Scene *scene, GameContext *context, const char *message) {
-    char message_buff[512];
-    snprintf(message_buff, sizeof(message_buff), "%s", message);
-    context->player_menu = render_text(scene, 
-                                       context->font, 
-                                       message_buff, 
-                                       (Color){255, 255, 255, 255}, 
-                                       context->player_menu);
 
-    if (context->player_menu && context->player_menu->texture) {
-      SDL_Rect dest;
-      dest.w = context->player_menu->width;
-      dest.h = context->player_menu->height;
-      dest.x = (APPCONFIG_WINDOW_WIDTH  - dest.w) / 2;
-      dest.y = (APPCONFIG_WINDOW_HEIGHT - dest.h) / 2;
-
-      SDL_RenderCopy(scene->render, context->player_menu->texture, NULL, &dest);
-    }
-
-
-    SDL_SetRenderDrawColor(scene->render, 13, 25, 32, 255);
-    SDL_RenderPresent(scene->render);
- }
 
 
 void run_game(SDL_Window *win, Scene* scene, GameContext *context){
@@ -253,7 +254,7 @@ void run_game(SDL_Window *win, Scene* scene, GameContext *context){
       continue;
     }
 
-    should_advance_levels(context);
+    should_advance_levels(scene, context);
     update_pad_position(win, context->pad, keys.left_pressed, keys.right_pressed, delta_time);
     handle_ball_window_collisions(context);
     handle_ball_pad_collision(context->ball, context->pad);

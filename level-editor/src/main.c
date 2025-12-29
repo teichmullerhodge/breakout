@@ -12,8 +12,8 @@ static void handle_brick_clicked(GtkWidget *widget, gpointer data) {
     (void)data;
     char **css_names = gtk_widget_get_css_classes(widget);
     char *css = css_names[0];
-    bool active = css != NULL && strcmp("brick-inactive", css) == 0;
     
+    bool active = css != NULL && strcmp("brick-inactive", css) == 0;
     gtk_widget_remove_css_class(widget, active ? "brick-inactive" : "brick-active");
     gtk_widget_add_css_class(widget, active ? "brick-active" : "brick-inactive");
     g_strfreev(css_names);
@@ -22,10 +22,10 @@ static void handle_brick_clicked(GtkWidget *widget, gpointer data) {
 static void on_activate(GtkApplication *app) {
   
   GtkCssProvider *provider = gtk_css_provider_new();
-  gtk_css_provider_load_from_path(provider, "./resources/css/index.css");
+  gtk_css_provider_load_from_path(provider, "../resources/css/index.css");
   gtk_style_context_add_provider_for_display(gdk_display_get_default(),
                                              GTK_STYLE_PROVIDER(provider),
-                                             GTK_STYLE_PROVIDER_PRIORITY_USER);
+                                             GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
   g_object_unref(provider);
 
