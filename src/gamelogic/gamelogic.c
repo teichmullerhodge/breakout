@@ -140,6 +140,7 @@ bool all_bricks_destroyed(Brick *bricks, size_t bricks_size) {
 }
 
 void should_advance_levels(Scene *scene, GameContext *context){
+  (void)scene;
   if(context->bricks_destroyed == context->level_info.destructiveBricks){
 
     if(context->current_level == LEVEL_CUSTOM) {
