@@ -46,6 +46,10 @@ typedef struct {
     
   bool blinking;
   size_t blinking_counter;
+
+  bool expanding;
+  size_t expanding_counter;
+
 } PadAttributes;
 
 typedef struct {

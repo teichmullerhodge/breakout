@@ -5,6 +5,8 @@
 #include "../logger/logger.h"
 #include "../helpers/color_helpers.h"
 
+
+
 void should_blink_pad(Pad *pad){
   pad->attributes.blinking = pad->attributes.blinking_counter != 0;
   if(pad->attributes.blinking){
@@ -15,6 +17,21 @@ void should_blink_pad(Pad *pad){
   }
 }
 
+void should_expand(Pad *pad){
+  pad->attributes.expanding = pad->attributes.expanding_counter != 0;
+  if(pad->attributes.expanding){
+      pad->base.rect.w += VALUE_GROW_PAD;
+      pad->attributes.expanding_counter--;
+  } 
+}
+
+
+void update_pad_attributes(Pad *pad){
+
+  should_blink_pad(pad);
+  should_expand(pad);
+
+}
 void check_pressed_flags(SDL_Event e, GameKeys* keys) {
     if (e.type == SDL_KEYDOWN){ 
         switch (e.key.keysym.sym){
@@ -68,9 +85,13 @@ void handle_power_up(Scene *scene, PowerUps power, GameContext *context){
   
       (void)scene;
 
-      context->pad->attributes.blinking_counter = 50;
+     // context->pad->attributes.blinking_counter = POWER_BLINKING_ATTR_DURATION;
       
-      if(power == POWER_GROW_PAD  && context->pad->base.rect.w <= LIMIT_PAD_WIDTH) context->pad->base.rect.w += VALUE_GROW_PAD;
+      if(power == POWER_GROW_PAD  && context->pad->base.rect.w <= LIMIT_PAD_WIDTH) {
+        context->pad->base.rect.w += VALUE_GROW_PAD;
+        context->pad->attributes.expanding = true;
+        context->pad->attributes.expanding_counter = POWER_EXPANDING_ATTR_DURATION;
+      }
       if(power == POWER_DOUBLE_BALLS) { 
           (void)power; // TODO
       }
@@ -266,7 +287,7 @@ void run_game(SDL_Window *win, Scene* scene, GameContext *context){
       display_centralized_message(scene, context, "Game Over");
       continue;
     }
-    should_blink_pad(context->pad);
+    update_pad_attributes(context->pad);
     should_advance_levels(scene, context);
     update_pad_position(win, context->pad, keys.left_pressed, keys.right_pressed, delta_time);
     handle_ball_window_collisions(context);
