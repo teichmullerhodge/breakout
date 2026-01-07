@@ -46,7 +46,10 @@ void color_entity(Entity *entity, Scene *scene, Color *color) {
 Pad create_pad(){
   
   SDL_Rect pad_rect = {100, 100, 100, 10};
-  Pad pad = {350.0f, 575.0f, BREAKOUT_PAD_VELOCITY, BREAKOUT_PAD_VELOCITY, (Color){40,100,255,60}, pad_rect, true};
+  Pad pad = {
+    .base = {350.0f, 575.0f, BREAKOUT_PAD_VELOCITY, BREAKOUT_PAD_VELOCITY, (Color){40,100,255,60}, pad_rect, true}, 
+    .attributes = { .blinking = false, .blinking_counter = 0} 
+  };
 
   return pad;
 

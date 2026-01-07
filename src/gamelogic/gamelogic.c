@@ -3,6 +3,17 @@
 #include "../appconfig/appconstants.h"
 #include "../levels/levels.h"
 #include "../logger/logger.h"
+#include "../helpers/color_helpers.h"
+
+void should_blink_pad(Pad *pad){
+  pad->attributes.blinking = pad->attributes.blinking_counter != 0;
+  if(pad->attributes.blinking){
+    pad->base.color = random_color();
+    pad->attributes.blinking_counter--;
+  } else {
+    pad->base.color = (Color){40,100,255,60}; 
+  }
+}
 
 void check_pressed_flags(SDL_Event e, GameKeys* keys) {
     if (e.type == SDL_KEYDOWN){ 
@@ -57,6 +68,8 @@ void handle_power_up(Scene *scene, PowerUps power, GameContext *context){
   
       (void)scene;
 
+      context->pad->attributes.blinking_counter = 50;
+      
       if(power == POWER_GROW_PAD  && context->pad->base.rect.w <= LIMIT_PAD_WIDTH) context->pad->base.rect.w += VALUE_GROW_PAD;
       if(power == POWER_DOUBLE_BALLS) { 
           (void)power; // TODO
@@ -238,7 +251,6 @@ void run_game(SDL_Window *win, Scene* scene, GameContext *context){
   
     game_over = context->player->lives == 0;
 
-
     while (SDL_PollEvent(&e)){
       if(should_quit(e) || keys.esc_pressed) running = false;
       check_pressed_flags(e, &keys); 
@@ -254,7 +266,7 @@ void run_game(SDL_Window *win, Scene* scene, GameContext *context){
       display_centralized_message(scene, context, "Game Over");
       continue;
     }
-
+    should_blink_pad(context->pad);
     should_advance_levels(scene, context);
     update_pad_position(win, context->pad, keys.left_pressed, keys.right_pressed, delta_time);
     handle_ball_window_collisions(context);

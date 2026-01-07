@@ -43,9 +43,15 @@ typedef struct {
 
 
 typedef struct {
+    
+  bool blinking;
+  size_t blinking_counter;
+} PadAttributes;
+
+typedef struct {
 
   Entity base;
-
+  PadAttributes attributes; 
 } Pad;
 
 typedef struct {
