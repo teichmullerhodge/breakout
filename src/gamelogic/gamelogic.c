@@ -85,12 +85,13 @@ void handle_power_up(Scene *scene, PowerUps power, GameContext *context){
   
       (void)scene;
 
-     // context->pad->attributes.blinking_counter = POWER_BLINKING_ATTR_DURATION;
-      
+     
       if(power == POWER_GROW_PAD  && context->pad->base.rect.w <= LIMIT_PAD_WIDTH) {
         context->pad->base.rect.w += VALUE_GROW_PAD;
         context->pad->attributes.expanding = true;
         context->pad->attributes.expanding_counter = POWER_EXPANDING_ATTR_DURATION;
+        context->pad->attributes.blinking_counter = POWER_BLINKING_ATTR_DURATION;
+        
       }
       if(power == POWER_DOUBLE_BALLS) { 
           (void)power; // TODO
